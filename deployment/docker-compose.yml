@@ -1,0 +1,52 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres
+    container_name: flatypedb
+    restart: always
+    networks:
+      - flatype
+    ports:
+      - ${DB_PORT}:5432
+    volumes:
+      - ../flatype/db_dev:${DB_DATA_PATH}
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      PGDATA: ${DB_DATA_PATH}
+
+  web:
+    build:
+      context: ..
+      dockerfile: ./deployment/dockerfiles/Dockerfile
+
+    container_name: flatype
+    image: flatype
+    restart: always
+    networks:
+      - flatype
+    depends_on:
+      - db
+    ports:
+      - ${WEB_PORT}:${WEB_PORT}
+    volumes:
+      - ../flatype/deployment:/opt/app/deployment
+      - ../flatype/src:/opt/app/src
+    command: bash -c ". env/bin/activate && cd src/ &&
+                      python manage.py migrate &&
+                      python manage.py collectstatic --noinput &&
+                      gunicorn --bind 0.0.0.0:${AUTH_WEB_PORT} config.asgi:application
+                      -k uvicorn.workers.UvicornWorker --reload"
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_PORT: ${DB_PORT}
+      LEVEL: ${LEVEL}
+      HOST: ${HOST}
+
+networks:
+  flatype:
+    driver: bridge
