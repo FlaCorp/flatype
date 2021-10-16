@@ -1,0 +1,3 @@
+[submodule "flatype"]
+	path = flatype
+	url = git@github.com:Flaiers/flatype.git
