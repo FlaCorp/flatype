@@ -10,7 +10,7 @@ services:
     ports:
       - ${DB_PORT}:5432
     volumes:
-      - ../flatype/db_dev:${DB_DATA_PATH}
+      - ../flatype/db:${DB_DATA_PATH}
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
