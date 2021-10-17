@@ -3,7 +3,6 @@ version: '3.7'
 services:
   db:
     image: postgres
-    container_name: flatypedb
     restart: always
     networks:
       - flatype
@@ -21,8 +20,6 @@ services:
     build:
       context: ..
       dockerfile: ./deployment/dockerfiles/Dockerfile
-
-    container_name: flatype
     image: flatype
     restart: always
     networks:
@@ -50,4 +47,8 @@ services:
 
 networks:
   flatype:
+    name: flatype
     driver: bridge
+  nginx:
+    external:
+      name: nginx
