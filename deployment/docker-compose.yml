@@ -31,12 +31,9 @@ services:
     volumes:
       - ../flatype/deployment:/opt/app/deployment
       - ../flatype/templates:/opt/app/templates
+      - ../flatype/public:/opt/app/public
       - ../flatype/src:/opt/app/src
-    command: bash -c ". env/bin/activate && cd src/ &&
-                      python manage.py migrate &&
-                      python manage.py collectstatic --noinput &&
-                      gunicorn --bind 0.0.0.0:${WEB_PORT} config.asgi:application
-                      -k uvicorn.workers.UvicornWorker --reload"
+    command: bash -c "./deployment/scripts/gunicorn.sh"
     environment:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}

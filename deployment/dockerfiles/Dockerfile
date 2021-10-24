@@ -9,6 +9,7 @@ WORKDIR /opt/app
 COPY flatype .
 
 # create environment, install packages
-RUN python -m venv env && . env/bin/activate && \
-    pip install -U pip && pip install -r src/requirements.txt && \
-    python src/manage.py makemigrations
+RUN python -m venv env && . env/bin/activate && cd src/ && \
+    pip install -U pip && pip install -r requirements.txt && \
+    python manage.py collectstatic --noinput && \
+    python manage.py makemigrations --name alter_db_table
