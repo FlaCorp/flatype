@@ -35,6 +35,7 @@ services:
       - ../flatype/src:/opt/app/src
     command: bash -c "./deployment/scripts/gunicorn.sh"
     environment:
+      WEB_PORT: ${WEB_PORT}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
