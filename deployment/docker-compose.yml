@@ -10,6 +10,8 @@ services:
       - ${DB_PORT}:5432
     volumes:
       - ../flatype/db_dev:${DB_DATA_PATH}
+    healthcheck:
+      test: "exit 0"
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -24,6 +26,7 @@ services:
     container_name: flatype_web
     networks:
       - flatype
+      - nginx
     depends_on:
       - db
     ports:
@@ -33,15 +36,14 @@ services:
       - ../flatype/templates:/opt/app/templates
       - ../flatype/public:/opt/app/public
       - ../flatype/src:/opt/app/src
-    command: bash -c "./deployment/scripts/gunicorn.sh"
+    command: bash -c "./deployment/scripts/uvicorn.sh"
     environment:
-      WEB_PORT: ${WEB_PORT}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      DB_PORT: ${DB_PORT}
-      LEVEL: ${LEVEL}
-      HOST: ${HOST}
+      - WEB_PORT
+      - LEVEL
+      - DB_USER
+      - DB_PASSWORD
+      - DB_NAME
+      - HOST
 
 networks:
   flatype:
