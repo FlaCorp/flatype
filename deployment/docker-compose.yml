@@ -10,8 +10,6 @@ services:
       - ${DB_PORT}:5432
     volumes:
       - ../flatype/db_dev:${DB_DATA_PATH}
-    healthcheck:
-      test: "exit 0"
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -36,7 +34,7 @@ services:
       - ../flatype/templates:/opt/app/templates
       - ../flatype/public:/opt/app/public
       - ../flatype/src:/opt/app/src
-    command: bash -c "./deployment/scripts/uvicorn.sh"
+    command: ["bash", "-c", "./deployment/scripts/command.sh"]
     environment:
       - WEB_PORT
       - LEVEL
