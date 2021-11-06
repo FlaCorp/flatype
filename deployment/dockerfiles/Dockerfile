@@ -8,6 +8,9 @@ WORKDIR /opt/app
 # copy web app to container
 COPY flatype/ .
 
+# update apt packages, install psql
+RUN apt-get update && apt-get install -y postgresql-client
+
 # create environment, install packages, makemigrations
 RUN python -m venv env && . env/bin/activate && cd src/ && \
     pip install -U pip && pip install -r requirements.txt && \

@@ -34,7 +34,7 @@ services:
       - ../flatype/templates:/opt/app/templates
       - ../flatype/public:/opt/app/public
       - ../flatype/src:/opt/app/src
-    command: ["bash", "-c", "./deployment/scripts/command.sh"]
+    command: ["./deployment/scripts/wait-for-postgres.sh", "./deployment/scripts/uvicorn.sh"]
     environment:
       - WEB_PORT
       - LEVEL
