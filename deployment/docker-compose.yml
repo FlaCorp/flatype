@@ -3,8 +3,7 @@ version: '3.7'
 services:
   db:
     image: postgres
-    container_name: flatypedb
-    restart: always
+    container_name: flatype_db
     networks:
       - flatype
     ports:
@@ -21,12 +20,11 @@ services:
     build:
       context: ..
       dockerfile: ./deployment/dockerfiles/Dockerfile
-
-    container_name: flatype
     image: flatype
-    restart: always
+    container_name: flatype_web
     networks:
       - flatype
+      - nginx
     depends_on:
       - db
     ports:
@@ -34,20 +32,21 @@ services:
     volumes:
       - ../flatype/deployment:/opt/app/deployment
       - ../flatype/templates:/opt/app/templates
+      - ../flatype/public:/opt/app/public
       - ../flatype/src:/opt/app/src
-    command: bash -c ". env/bin/activate && cd src/ &&
-                      python manage.py migrate &&
-                      python manage.py collectstatic --noinput &&
-                      gunicorn --bind 0.0.0.0:${WEB_PORT} config.asgi:application
-                      -k uvicorn.workers.UvicornWorker --reload"
+    command: ["./deployment/scripts/wait-for-postgres.sh", "./deployment/scripts/uvicorn.sh"]
     environment:
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      DB_PORT: ${DB_PORT}
-      LEVEL: ${LEVEL}
-      HOST: ${HOST}
+      - WEB_PORT
+      - LEVEL
+      - DB_USER
+      - DB_PASSWORD
+      - DB_NAME
+      - HOST
 
 networks:
   flatype:
+    name: flatype
     driver: bridge
+  nginx:
+    external:
+      name: nginx
